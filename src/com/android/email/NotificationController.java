@@ -476,6 +476,12 @@ public class NotificationController {
         return mAudioManager.getRingerMode();
     }
 
+    /** Returns if phone can vibrate */
+    @VisibleForTesting
+    boolean shouldVibrate() {
+        return mAudioManager.shouldVibrate(AudioManager.VIBRATE_TYPE_RINGER);
+    }
+
     /** Sets up the notification's sound and vibration based upon account details. */
     @VisibleForTesting
     void setupSoundAndVibration(Notification.Builder builder, Account account) {
@@ -486,7 +492,7 @@ public class NotificationController {
         final boolean isRingerSilent = getRingerMode() != AudioManager.RINGER_MODE_NORMAL;
 
         int defaults = Notification.DEFAULT_LIGHTS;
-        if (vibrate || (vibrateWhenSilent && isRingerSilent)) {
+        if ((vibrate && shouldVibrate()) || (vibrateWhenSilent && isRingerSilent)) {
             defaults |= Notification.DEFAULT_VIBRATE;
         }
 
